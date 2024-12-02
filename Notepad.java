@@ -6,6 +6,7 @@ import javax.swing.undo.*;
 import java.io.*;
 import javax.swing.text.*;
 import javax.swing.event.*;
+import java.util.*;
 public class Notepad extends JFrame
 {
 private FontChooser fontChooser;
@@ -188,7 +189,7 @@ cutMenuItem.setEnabled(selectedText!=null);
 copyMenuItem.setEnabled(selectedText!=null && (!selectedText.isEmpty()));
 deleteMenuItem.setEnabled(selectedText!=null);
 });
-Timer clipBoardChecker=new Timer(500,(ev)->{
+javax.swing.Timer clipBoardChecker=new javax.swing.Timer(500,(ev)->{
 pasteMenuItem.setEnabled(isClipboardAvailable());
 });
 clipBoardChecker.start();
@@ -271,15 +272,21 @@ JDialog findDialog=new JDialog(Notepad.this,"Find",false);
 findDialog.getRootPane().registerKeyboardAction(ef->
 findDialog.dispose(),KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE,0),JComponent.WHEN_IN_FOCUSED_WINDOW
 );
-
 findDialog.setSize(400,160);
+
 findDialog.setLayout(null);
+JPanel mainPanel=new JPanel();
+mainPanel.setLayout(null);
+mainPanel.setBounds(0,0,290,160);
 JLabel findWhatLabel=new JLabel("Find What : ");
 findWhatLabel.setBounds(10,10,70,20);
 JTextField findField=new JTextField();
 findField.setBounds(90,10,200,20);
-findDialog.add(findWhatLabel);
-findDialog.add(findField);
+mainPanel.add(findWhatLabel);
+mainPanel.add(findField);
+findDialog.add(mainPanel);
+//findDialog.add(findWhatLabel);
+//findDialog.add(findField);
 
 JPanel buttonPanel=new JPanel();
 buttonPanel.setLayout(null);
@@ -288,21 +295,22 @@ JButton findNextButton=new JButton("Find Next");
 findNextButton.setBounds(5,0,80,20);
 JButton cancelButton=new JButton("Cancel");
 cancelButton.setBounds(5,30,80,20);
-
 buttonPanel.add(findNextButton);
 buttonPanel.add(cancelButton);
 findDialog.add(buttonPanel);
 
-//findDialog.add(findNextButton);
-//findDialog.add(cancelButton);
+findDialog.getRootPane().setDefaultButton(findNextButton);
+
 
 JCheckBox matchCaseCheckBox=new JCheckBox("Match Case");
 matchCaseCheckBox.setBounds(10,65,100,20);
 JCheckBox wrapAroundCheckBox=new JCheckBox("Wrap Around");
 wrapAroundCheckBox.setBounds(10,90,100,20);
 
-findDialog.add(matchCaseCheckBox);
-findDialog.add(wrapAroundCheckBox);
+mainPanel.add(matchCaseCheckBox);
+mainPanel.add(wrapAroundCheckBox);
+//findDialog.add(matchCaseCheckBox);
+//findDialog.add(wrapAroundCheckBox);
 
 JPanel directionPanel=new JPanel();
 directionPanel.setLayout(new FlowLayout(FlowLayout.LEFT));
@@ -315,13 +323,16 @@ upRadioButton.setBounds(20+30+10,80,40,20);
 JRadioButton downRadioButton=new JRadioButton("Down",true);
 downRadioButton.setBounds(10+30+20+30+10,80,60,20);
 
+
 ButtonGroup directionGroup=new ButtonGroup();
 directionGroup.add(upRadioButton);
 directionGroup.add(downRadioButton);
 //findDialog.add(directionLabel);
 directionPanel.add(upRadioButton);
 directionPanel.add(downRadioButton);
-findDialog.add(directionPanel);
+//findDialog.add(directionPanel);
+mainPanel.add(directionPanel);
+
 
 findField.addKeyListener(new KeyAdapter(){
 public void keyTyped(KeyEvent ke)
@@ -358,17 +369,6 @@ findDialog.dispose();
 findDialog.setLocationRelativeTo(Notepad.this);
 findDialog.setVisible(true);
 
-/*
-findNextButton.addFocusListener(new FocusAdapter(){
-public void focusLost(FocusEvent fe)
-{
-SwingUtilities.invokeLater(()->{
-findNextButton.requestFocusInWindow();
-});
-}
-});
-*/
-findNextButton.requestFocusInWindow();	
 
 findField.setText(findPreviousSearchedText);
 
@@ -378,16 +378,18 @@ if(selectedText!=null && !selectedText.isEmpty())
 {
 findField.setText(selectedText);
 findPreviousSearchedText=selectedText;
-//findField.selectAll();
+findField.selectAll();
 }
 
 
 if(findPreviousSearchedText.trim().length()==0) findNextButton.setEnabled(false);
+/*
+NO NEED WILL REMOVE LATER
 if(findField.getText().trim().length()!=0)
 {
-SwingUtilities.invokeLater(()->findNextButton.requestFocusInWindow());
+//SwingUtilities.invokeLater(()->findNextButton.requestFocusInWindow());
 }
-	
+*/	
 });
 
 findNextMenuItem.addActionListener(ev->{
